@@ -16,6 +16,8 @@ namespace GbSOSDbConnect
         // Skapa ref för MySQLConnection objekt
         MySqlConnection conn;
 
+        TextBox[] txtBoxesPerson;
+
         public Form1()
         {
             InitializeComponent();
@@ -29,10 +31,40 @@ namespace GbSOSDbConnect
             string connString = $"SERVER={server};DATABASE={database};UID={user};PASSWORD={password};";
 
             conn = new MySqlConnection(connString);
+
+            //Skapa en Array Ref för input fält
+            txtBoxesPerson = new TextBox[] { txtName, txtAge };
         }
 
         private void InsertPersonToDB()
         {
+            //Validering
+            bool valid = true;
+
+            foreach (TextBox txtBox in txtBoxesPerson)
+            {
+                //Trimmar test-innehållet
+                txtBox.Text = txtBox.Text.Trim();
+
+                //Kontrollera att txtBox har text
+                if (txtBox.Text == "")
+                {
+                    //Validering har misslyckats
+                    valid = false;
+                    txtBox.BackColor = Color.IndianRed;
+                } else
+                {
+                    txtBox.BackColor = TextBox.DefaultBackColor;
+                }
+            }
+
+            //Kontrollera valid
+            if (!valid)
+            {
+                MessageBox.Show("Felaktig validering. Kontrollera röda fält.");
+                return;
+            }
+
             //Hämta värden från textfält
             string name = txtName.Text;
             int age = Convert.ToInt32( txtAge.Text);
