@@ -99,5 +99,68 @@ namespace GbSOSDbConnect
         {
             InsertPersonToDB();
         }
+
+        private void SelectPersonsFromDB(string keyword = "")
+        {
+            //Skapa en SQL Querry
+            string sqlQuerry;
+
+            if (keyword == "") sqlQuerry = $"CALL selectPeople();";
+            else               sqlQuerry = $"CALL searchPeople('{keyword}');";
+
+            //Skapa ett MySQLCommand objekt
+            MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
+
+            //Exekvera querry mot DB. Få data tillbaka
+            try
+            {
+                //Öppnar koppling till DB
+                conn.Open();
+
+                //Exekvera cmd
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                //Placera data i en DataTable objekt
+                DataTable dt = new DataTable();
+                dt.Load(reader);
+
+                //Koppla TD objekt som DataSource till Grid
+                gridPeopleOutput.DataSource = dt;
+
+                //Ladda Reader på Nytt
+                reader = cmd.ExecuteReader();
+
+                //Tömma statisk lista
+                Person.people.Clear();
+
+                //While loop för att spara datan lokalt i en lista
+                while(reader.Read())
+                {
+                    //Hämta och spara data till variabler
+                    int id = Convert.ToInt32(reader["people_id"]);
+                    string name = reader["people_name"].ToString();
+                    int age = Convert.ToInt32(reader["people_age"]);
+
+                    //Skapa ett Person obejkt och spara i statisk lista
+                    Person.people.Add(new Person(id, name, age));
+                }
+
+                //Stänga koppling till DB
+                conn.Close();
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SelectPersonsFromDB();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SelectPersonsFromDB( txtSearch.Text );
+        }
     }
 }
