@@ -40,7 +40,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.gridPetsOutput = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.gridPeopleOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPetsOutput)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -165,11 +167,22 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
+            // gridPetsOutput
+            // 
+            this.gridPetsOutput.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPetsOutput.Location = new System.Drawing.Point(531, 192);
+            this.gridPetsOutput.Name = "gridPetsOutput";
+            this.gridPetsOutput.RowHeadersWidth = 51;
+            this.gridPetsOutput.RowTemplate.Height = 24;
+            this.gridPetsOutput.Size = new System.Drawing.Size(488, 243);
+            this.gridPetsOutput.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1099, 667);
+            this.ClientSize = new System.Drawing.Size(1197, 667);
+            this.Controls.Add(this.gridPetsOutput);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.label3);
@@ -185,6 +198,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.gridPeopleOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPetsOutput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,6 +218,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.DataGridView gridPetsOutput;
     }
 }
 

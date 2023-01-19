@@ -193,6 +193,9 @@ namespace GbSOSDbConnect
                     break;
                 }
             }
+
+            //Uppdatera Pets grid via personens ID
+            GetPetsByPerson(id);
         }
 
         private void UpdatePersonToDB()
@@ -273,6 +276,37 @@ namespace GbSOSDbConnect
 
             //Hämta den nya datan
             SelectPersonsFromDB();
+        }
+
+        private void GetPetsByPerson(int id)
+        {
+            //Sql querry
+            string SqlQuerry = $"CALL SelectPetByPeople({id});";
+
+            //Command
+            MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling
+                conn.Open();
+
+                //Exekvera kommando
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                //Skapa och fyll upp dataTable
+                DataTable dt = new DataTable();
+                dt.Load(reader);
+
+                //Koppla dt till DatSource i Grid
+                gridPetsOutput.DataSource = dt;
+
+                //Stäng koppling
+                conn.Close();
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }
