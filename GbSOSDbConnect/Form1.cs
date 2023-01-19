@@ -17,6 +17,7 @@ namespace GbSOSDbConnect
         MySqlConnection conn;
 
         TextBox[] txtBoxesPerson;
+        TextBox[] txtBoxesPets;
 
         public Form1()
         {
@@ -34,6 +35,7 @@ namespace GbSOSDbConnect
 
             //Skapa en Array Ref för input fält
             txtBoxesPerson = new TextBox[] { txtName, txtAge };
+            txtBoxesPets = new TextBox[] { txtPetName, txtPetSpieces };
         }
 
         private void InsertPersonToDB()
@@ -307,6 +309,79 @@ namespace GbSOSDbConnect
             {
                 MessageBox.Show(e.Message);
             }
+        }
+
+        private void btnAddPetToPerson_Click(object sender, EventArgs e)
+        {
+            AddPetToPerson();
+        }
+
+        private void AddPetToPerson()
+        {
+            //Kontrollera att vi har en markerad rad i grid
+            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+
+            //Kontrollera att Pets formuläret har inmatade värden
+            bool valid = true;
+
+            foreach (TextBox txtBox in txtBoxesPets)
+            {
+                //Trimmar test-innehållet
+                txtBox.Text = txtBox.Text.Trim();
+
+                //Kontrollera att txtBox har text
+                if (txtBox.Text == "")
+                {
+                    //Validering har misslyckats
+                    valid = false;
+                    txtBox.BackColor = Color.IndianRed;
+                }
+                else
+                {
+                    txtBox.BackColor = TextBox.DefaultBackColor;
+                }
+            }
+
+            //Kontrollera valid
+            if (!valid)
+            {
+                MessageBox.Show("Felaktig validering. Kontrollera röda fält.");
+                return;
+            }
+
+            //Hämta data från grid
+            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            int id = Convert.ToInt32(row[0].Cells[0].Value);
+
+            //Hämta textvärden
+            string petName = txtPetName.Text;
+            string petSpieces = txtPetSpieces.Text;
+
+            //SqlQuerry
+            string SqlQuerry = $"CALL insertPetToPerson({id}, '{petName}', '{petSpieces}');";
+
+            //MySqlCommand
+            MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling till DB
+                conn.Open();
+
+                //Exekverar commando
+                cmd.ExecuteReader();
+
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            //Uppdatera PetGrid
+            GetPetsByPerson(id);
+
+            MessageBox.Show("Insert finished successfully!");
         }
     }
 }

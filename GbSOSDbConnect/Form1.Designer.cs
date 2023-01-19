@@ -41,6 +41,11 @@
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.gridPetsOutput = new System.Windows.Forms.DataGridView();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtPetName = new System.Windows.Forms.TextBox();
+            this.txtPetSpieces = new System.Windows.Forms.TextBox();
+            this.btnAddPetToPerson = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridPeopleOutput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridPetsOutput)).BeginInit();
             this.SuspendLayout();
@@ -177,11 +182,63 @@
             this.gridPetsOutput.Size = new System.Drawing.Size(488, 243);
             this.gridPetsOutput.TabIndex = 9;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(526, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(104, 25);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Pet Name:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(507, 67);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(123, 25);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Pet Spieces:";
+            // 
+            // txtPetName
+            // 
+            this.txtPetName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPetName.Location = new System.Drawing.Point(636, 12);
+            this.txtPetName.Name = "txtPetName";
+            this.txtPetName.Size = new System.Drawing.Size(235, 30);
+            this.txtPetName.TabIndex = 12;
+            // 
+            // txtPetSpieces
+            // 
+            this.txtPetSpieces.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPetSpieces.Location = new System.Drawing.Point(636, 64);
+            this.txtPetSpieces.Name = "txtPetSpieces";
+            this.txtPetSpieces.Size = new System.Drawing.Size(235, 30);
+            this.txtPetSpieces.TabIndex = 13;
+            // 
+            // btnAddPetToPerson
+            // 
+            this.btnAddPetToPerson.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddPetToPerson.Location = new System.Drawing.Point(531, 116);
+            this.btnAddPetToPerson.Name = "btnAddPetToPerson";
+            this.btnAddPetToPerson.Size = new System.Drawing.Size(167, 70);
+            this.btnAddPetToPerson.TabIndex = 14;
+            this.btnAddPetToPerson.Text = "Add Pet to Person";
+            this.btnAddPetToPerson.UseVisualStyleBackColor = true;
+            this.btnAddPetToPerson.Click += new System.EventHandler(this.btnAddPetToPerson_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1197, 667);
+            this.Controls.Add(this.btnAddPetToPerson);
+            this.Controls.Add(this.txtPetSpieces);
+            this.Controls.Add(this.txtPetName);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.gridPetsOutput);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnUpdate);
@@ -219,6 +276,11 @@
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.DataGridView gridPetsOutput;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtPetName;
+        private System.Windows.Forms.TextBox txtPetSpieces;
+        private System.Windows.Forms.Button btnAddPetToPerson;
     }
 }
 
