@@ -236,5 +236,43 @@ namespace GbSOSDbConnect
         {
             UpdatePersonToDB();
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DeletePerson();
+        }
+        private void DeletePerson()
+        {
+            //Kontrollera att vi har en markerad rad i grid
+            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+
+            //Hämta data från grid
+            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            int id = Convert.ToInt32(row[0].Cells[0].Value);
+
+            //Skapar en SQL Querry
+            string SqlQuerry = $"CALL deletePeople({id});";
+
+            //MySqlCommand
+            MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling till DB
+                conn.Open();
+
+                //Exekverar commando
+                cmd.ExecuteReader();
+
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            //Hämta den nya datan
+            SelectPersonsFromDB();
+        }
     }
 }
