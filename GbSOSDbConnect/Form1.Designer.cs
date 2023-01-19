@@ -38,6 +38,8 @@
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridPeopleOutput)).BeginInit();
             this.SuspendLayout();
             // 
@@ -106,8 +108,9 @@
             this.gridPeopleOutput.Name = "gridPeopleOutput";
             this.gridPeopleOutput.RowHeadersWidth = 51;
             this.gridPeopleOutput.RowTemplate.Height = 24;
-            this.gridPeopleOutput.Size = new System.Drawing.Size(728, 243);
+            this.gridPeopleOutput.Size = new System.Drawing.Size(494, 243);
             this.gridPeopleOutput.TabIndex = 3;
+            this.gridPeopleOutput.SelectionChanged += new System.EventHandler(this.gridPeopleOutput_SelectionChanged);
             // 
             // txtSearch
             // 
@@ -138,11 +141,36 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Search:";
             // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Enabled = false;
+            this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdate.Location = new System.Drawing.Point(12, 485);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(122, 69);
+            this.btnUpdate.TabIndex = 7;
+            this.btnUpdate.Text = "UPDATE";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelete.Location = new System.Drawing.Point(140, 485);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(122, 69);
+            this.btnDelete.TabIndex = 8;
+            this.btnDelete.Text = "DELETE";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(999, 667);
+            this.ClientSize = new System.Drawing.Size(1099, 667);
+            this.Controls.Add(this.btnDelete);
+            this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.txtSearch);
@@ -173,6 +201,8 @@
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Button btnDelete;
     }
 }
 

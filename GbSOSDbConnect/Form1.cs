@@ -151,6 +151,10 @@ namespace GbSOSDbConnect
             {
                 MessageBox.Show(e.Message);
             }
+
+            //Enabla knapp för Update och Delete
+            btnUpdate.Enabled = true;
+            btnDelete.Enabled = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -161,6 +165,76 @@ namespace GbSOSDbConnect
         private void button3_Click(object sender, EventArgs e)
         {
             SelectPersonsFromDB( txtSearch.Text );
+        }
+
+        private void gridPeopleOutput_SelectionChanged(object sender, EventArgs e)
+        {
+            GetRowData();
+        }
+
+        private void GetRowData()
+        {
+            //Kontrollera att vi har en markerad rad i grid
+            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+
+            //Hämta data från grid
+            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            int id = Convert.ToInt32( row[0].Cells[0].Value );
+
+            //Skriva in data från grid till formulär
+            foreach(Person person in Person.people)
+            {
+                // Kontrollera ID property
+                if (person.Id == id)
+                {
+                    //Rätt objekt hittat
+                    txtName.Text = person.Name;
+                    txtAge.Text = person.Age.ToString();
+                    break;
+                }
+            }
+        }
+
+        private void UpdatePersonToDB()
+        {
+            //Kontrollera att vi har en markerad rad i grid
+            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+
+            //Hämta data från grid
+            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            int id = Convert.ToInt32(row[0].Cells[0].Value);
+
+            //hämtar värden från textfält
+            string name = txtName.Text;
+            int age = Convert.ToInt32(txtAge.Text);
+
+            //Skapar en SQL Querry
+            string SqlQuerry = $"CALL updatePeople({id}, '{name}', {age});";
+
+            //MySqlCommand
+            MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling till DB
+                conn.Open();
+
+                //Exekverar commando
+                cmd.ExecuteReader();
+
+                conn.Close();
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            //Hämta den nya datan
+            SelectPersonsFromDB();
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            UpdatePersonToDB();
         }
     }
 }
