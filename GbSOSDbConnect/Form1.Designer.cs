@@ -46,6 +46,8 @@
             this.txtPetName = new System.Windows.Forms.TextBox();
             this.txtPetSpieces = new System.Windows.Forms.TextBox();
             this.btnAddPetToPerson = new System.Windows.Forms.Button();
+            this.btnSelectPets = new System.Windows.Forms.Button();
+            this.btnAddPetToNewPerson = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridPeopleOutput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridPetsOutput)).BeginInit();
             this.SuspendLayout();
@@ -221,19 +223,43 @@
             // btnAddPetToPerson
             // 
             this.btnAddPetToPerson.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddPetToPerson.Location = new System.Drawing.Point(531, 116);
+            this.btnAddPetToPerson.Location = new System.Drawing.Point(718, 116);
             this.btnAddPetToPerson.Name = "btnAddPetToPerson";
             this.btnAddPetToPerson.Size = new System.Drawing.Size(167, 70);
             this.btnAddPetToPerson.TabIndex = 14;
-            this.btnAddPetToPerson.Text = "Add Pet to Person";
+            this.btnAddPetToPerson.Text = "Add Pet to Current Person";
             this.btnAddPetToPerson.UseVisualStyleBackColor = true;
             this.btnAddPetToPerson.Click += new System.EventHandler(this.btnAddPetToPerson_Click);
+            // 
+            // btnSelectPets
+            // 
+            this.btnSelectPets.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSelectPets.Location = new System.Drawing.Point(531, 116);
+            this.btnSelectPets.Name = "btnSelectPets";
+            this.btnSelectPets.Size = new System.Drawing.Size(167, 70);
+            this.btnSelectPets.TabIndex = 14;
+            this.btnSelectPets.Text = "Get All pets";
+            this.btnSelectPets.UseVisualStyleBackColor = true;
+            this.btnSelectPets.Click += new System.EventHandler(this.btnSelectPets_Click);
+            // 
+            // btnAddPetToNewPerson
+            // 
+            this.btnAddPetToNewPerson.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddPetToNewPerson.Location = new System.Drawing.Point(901, 116);
+            this.btnAddPetToNewPerson.Name = "btnAddPetToNewPerson";
+            this.btnAddPetToNewPerson.Size = new System.Drawing.Size(149, 70);
+            this.btnAddPetToNewPerson.TabIndex = 14;
+            this.btnAddPetToNewPerson.Text = "Add Pet to New Person";
+            this.btnAddPetToNewPerson.UseVisualStyleBackColor = true;
+            this.btnAddPetToNewPerson.Click += new System.EventHandler(this.btnAddPetToNewPerson_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1197, 667);
+            this.Controls.Add(this.btnSelectPets);
+            this.Controls.Add(this.btnAddPetToNewPerson);
             this.Controls.Add(this.btnAddPetToPerson);
             this.Controls.Add(this.txtPetSpieces);
             this.Controls.Add(this.txtPetName);
@@ -281,6 +307,8 @@
         private System.Windows.Forms.TextBox txtPetName;
         private System.Windows.Forms.TextBox txtPetSpieces;
         private System.Windows.Forms.Button btnAddPetToPerson;
+        private System.Windows.Forms.Button btnSelectPets;
+        private System.Windows.Forms.Button btnAddPetToNewPerson;
     }
 }
 

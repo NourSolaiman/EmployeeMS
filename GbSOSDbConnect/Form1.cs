@@ -159,6 +159,39 @@ namespace GbSOSDbConnect
             btnDelete.Enabled = true;
         }
 
+        private void SelectPetsFromDB()
+        {
+            //Skapa en SQL Querry
+            string sqlQuerry = $"CALL selectPets();";
+
+            //Skapa ett MySQLCommand objekt
+            MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
+
+            //Exekvera querry mot DB. Få data tillbaka
+            try
+            {
+                //Öppnar koppling till DB
+                conn.Open();
+
+                //Exekvera cmd
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                //Placera data i en DataTable objekt
+                DataTable dt = new DataTable();
+                dt.Load(reader);
+
+                //Koppla TD objekt som DataSource till Grid
+                gridPetsOutput.DataSource = dt;
+
+                //Stänga koppling till DB
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             SelectPersonsFromDB();
@@ -382,6 +415,98 @@ namespace GbSOSDbConnect
             GetPetsByPerson(id);
 
             MessageBox.Show("Insert finished successfully!");
+        }
+
+        private void btnSelectPets_Click(object sender, EventArgs e)
+        {
+            SelectPetsFromDB();
+        }
+
+        private void AddPetToNewPerson()
+        {
+            //Validering
+            //Kontrollera att både Persons och Pets formuläret har inmatade värden
+            bool valid = true;
+
+            foreach (TextBox txtBox in txtBoxesPerson)
+            {
+                //Trimmar test-innehållet
+                txtBox.Text = txtBox.Text.Trim();
+
+                //Kontrollera att txtBox har text
+                if (txtBox.Text == "")
+                {
+                    //Validering har misslyckats
+                    valid = false;
+                    txtBox.BackColor = Color.IndianRed;
+                }
+                else
+                {
+                    txtBox.BackColor = TextBox.DefaultBackColor;
+                }
+            }
+
+            foreach (TextBox txtBox in txtBoxesPets)
+            {
+                //Trimmar test-innehållet
+                txtBox.Text = txtBox.Text.Trim();
+
+                //Kontrollera att txtBox har text
+                if (txtBox.Text == "")
+                {
+                    //Validering har misslyckats
+                    valid = false;
+                    txtBox.BackColor = Color.IndianRed;
+                }
+                else
+                {
+                    txtBox.BackColor = TextBox.DefaultBackColor;
+                }
+            }
+
+            //Kontrollera valid
+            if (!valid)
+            {
+                MessageBox.Show("Felaktig validering. Kontrollera röda fält.");
+                return;
+            }
+
+            //Hämta data och exekvera SQL
+            string personName = txtName.Text;
+            int personAge = Convert.ToInt32(txtAge.Text);
+            string petName = txtPetName.Text;
+            string petSpieces = txtPetSpieces.Text;
+
+            //Skapa SQL querry
+            string sqlQuerry = $"CALL InsertNewPetToNewPeople('{personName}', {personAge}, '{petName}', '{petSpieces}');";
+
+            //Skapa Command objekt
+            MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling, exekvera och stäng koppling
+                conn.Open();
+                cmd.ExecuteReader();
+                conn.Close();
+            } catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            //Hämta data till Person Tabellen
+            SelectPersonsFromDB();
+
+            //Markera den nya personen i grid
+            gridPeopleOutput.Rows[gridPeopleOutput.Rows.Count - 2].Selected = true;
+
+            //Hämta data till Pet Tabellen
+            GetRowData();
+        }
+
+        private void btnAddPetToNewPerson_Click(object sender, EventArgs e)
+        {
+            AddPetToNewPerson();
         }
     }
 }
