@@ -5,20 +5,21 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GbSOSDbConnect
+namespace EmployyeManageSys
 {
     public partial class Form1 : Form
     {
         // Skapa ref för MySQLConnection objekt
         MySqlConnection conn;
 
-        TextBox[] txtBoxesPerson;
-        TextBox[] txtBoxesPets;
-
+        TextBox[] txtBoxesDepartments;
+        TextBox[] txtBoxesEmployees;
+        TextBox[] txtBoxesDep_Emp;
         public Form1()
         {
             InitializeComponent();
@@ -27,23 +28,24 @@ namespace GbSOSDbConnect
             string server = "localhost";
             string database = "gbsosdbapplikation";
             string user = "root";
-            string password = "SokrateS13";
+            string password = "Mns@19741111";
 
             string connString = $"SERVER={server};DATABASE={database};UID={user};PASSWORD={password};";
 
             conn = new MySqlConnection(connString);
 
             //Skapa en Array Ref för input fält
-            txtBoxesPerson = new TextBox[] { txtName, txtAge };
-            txtBoxesPets = new TextBox[] { txtPetName, txtPetSpieces };
+            txtBoxesDepartments = new TextBox[] { txtName, txtFloor };
+            txtBoxesEmployees = new TextBox[] { txtEmployeeName, txtEmployyeAddress, txtPhoneNumber,txtEmail};
+            txtBoxesDep_Emp = txtBoxesDepartments.Concat(txtBoxesEmployees).ToArray();
         }
 
-        private void InsertPersonToDB()
+        private void InsertDepartmentToDB()
         {
             //Validering
             bool valid = true;
 
-            foreach (TextBox txtBox in txtBoxesPerson)
+            foreach (TextBox txtBox in txtBoxesDepartments)
             {
                 //Trimmar test-innehållet
                 txtBox.Text = txtBox.Text.Trim();
@@ -68,11 +70,11 @@ namespace GbSOSDbConnect
             }
 
             //Hämta värden från textfält
-            string name = txtName.Text;
-            int age = Convert.ToInt32( txtAge.Text);
+            string depName = txtName.Text;
+            int floor = Convert.ToInt32( txtFloor.Text);
 
             //Bygg upp SQL querry
-            string sqlQuerry = $"CALL insertPeople('{name}', {age});";
+            string sqlQuerry = $"CALL insertDepartment('{depName}', {floor});";
 
             //Skapar ett MySqlCOmmand objekt
             MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
@@ -95,20 +97,21 @@ namespace GbSOSDbConnect
 
             //Bekräftelse till användare
             MessageBox.Show("Insert Finished Successfully!");
+            SelectDepartmentFromDB();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnInsertDepToDB(object sender, EventArgs e)
         {
-            InsertPersonToDB();
+            InsertDepartmentToDB();
         }
 
-        private void SelectPersonsFromDB(string keyword = "")
+        private void SelectDepartmentFromDB(string keyword = "")
         {
             //Skapa en SQL Querry
             string sqlQuerry;
 
-            if (keyword == "") sqlQuerry = $"CALL selectPeople();";
-            else               sqlQuerry = $"CALL searchPeople('{keyword}');";
+            if (keyword == "") sqlQuerry = $"CALL selectDepartment();";
+            else               sqlQuerry = $"CALL searchDepartment('{keyword}');";
 
             //Skapa ett MySQLCommand objekt
             MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
@@ -127,29 +130,29 @@ namespace GbSOSDbConnect
                 dt.Load(reader);
 
                 //Koppla TD objekt som DataSource till Grid
-                gridPeopleOutput.DataSource = dt;
+                gridDepartmentOutput.DataSource = dt;
 
                 //Ladda Reader på Nytt
                 reader = cmd.ExecuteReader();
 
                 //Tömma statisk lista
-                Person.people.Clear();
+                Department.department.Clear();
 
                 //While loop för att spara datan lokalt i en lista
                 while(reader.Read())
                 {
                     //Hämta och spara data till variabler
-                    int id = Convert.ToInt32(reader["people_id"]);
-                    string name = reader["people_name"].ToString();
-                    int age = Convert.ToInt32(reader["people_age"]);
+                    int id = Convert.ToInt32(reader["departments_id"]);
+                    string name = reader["departments_name"].ToString();
+                    int floor = Convert.ToInt32(reader["departments_floor"]);
 
-                    //Skapa ett Person obejkt och spara i statisk lista
-                    Person.people.Add(new Person(id, name, age));
+                    //Skapa ett Department obejkt och spara i statisk lista
+                    Department.department.Add(new Department(id, name, floor));
                 }
 
                 //Stänga koppling till DB
                 conn.Close();
-            } catch (Exception e)
+            } catch (Exception e) 
             {
                 MessageBox.Show(e.Message);
             }
@@ -157,13 +160,21 @@ namespace GbSOSDbConnect
             //Enabla knapp för Update och Delete
             btnUpdate.Enabled = true;
             btnDelete.Enabled = true;
+            btnUpdateEmployee.Enabled = true;
+        }
+        private void btnSelectDepFromDB(object sender, EventArgs e)
+        {
+            SelectDepartmentFromDB();
+           
         }
 
-        private void SelectPetsFromDB()
+        private void SelectEmployeesFromDB(string keyword = "")
         {
             //Skapa en SQL Querry
-            string sqlQuerry = $"CALL selectPets();";
+            string sqlQuerry;
 
+            if (keyword == "") sqlQuerry = $"CALL selectEmployees();";
+            else sqlQuerry = $"CALL searchEmployee('{keyword}');";
             //Skapa ett MySQLCommand objekt
             MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
 
@@ -181,7 +192,28 @@ namespace GbSOSDbConnect
                 dt.Load(reader);
 
                 //Koppla TD objekt som DataSource till Grid
-                gridPetsOutput.DataSource = dt;
+                gridEmployeeOutput.DataSource = dt;
+
+                //Ladda Reader på Nytt
+                reader = cmd.ExecuteReader();
+
+                //Tömma statisk lista
+                Employee.employee.Clear();
+
+
+                //While loop för att spara datan lokalt i en lista
+                while (reader.Read())
+                {
+                    //Hämta och spara data till variabler
+                    int id = Convert.ToInt32(reader["employees_id"]);
+                    string name = reader["employees_name"].ToString();
+                    string address = reader["employees_address"].ToString();
+                    string phoneNumber = reader["employees_phone_number"].ToString();
+                    string email = reader["employees_email"].ToString();                    
+
+                    //Skapa ett Department obejkt och spara i statisk lista
+                    Employee.employee.Add(new Employee(id, name,address, phoneNumber,email));
+                }
 
                 //Stänga koppling till DB
                 conn.Close();
@@ -189,65 +221,68 @@ namespace GbSOSDbConnect
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-            }
+            } 
+            
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        
+        private void btnSearchDep(object sender, EventArgs e)
         {
-            SelectPersonsFromDB();
+            SelectDepartmentFromDB( txtSearch.Text );
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSearchEmp(object sender, EventArgs e)
         {
-            SelectPersonsFromDB( txtSearch.Text );
+            SelectEmployeesFromDB(txtSearch2.Text);
         }
 
-        private void gridPeopleOutput_SelectionChanged(object sender, EventArgs e)
+        private void gridDepartmentsOutput_SelectionChanged(object sender, EventArgs e)
         {
             GetRowData();
         }
-
+      
         private void GetRowData()
         {
             //Kontrollera att vi har en markerad rad i grid
-            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+            if (gridDepartmentOutput.SelectedRows.Count != 1) return;
 
             //Hämta data från grid
-            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            DataGridViewSelectedRowCollection row = gridDepartmentOutput.SelectedRows;
             int id = Convert.ToInt32( row[0].Cells[0].Value );
 
             //Skriva in data från grid till formulär
-            foreach(Person person in Person.people)
+            foreach(Department dep in Department.department)
             {
                 // Kontrollera ID property
-                if (person.Id == id)
+                if (dep.DepId == id)
                 {
                     //Rätt objekt hittat
-                    txtName.Text = person.Name;
-                    txtAge.Text = person.Age.ToString();
+                    txtName.Text = dep.DepName;
+                    txtFloor.Text = dep.Floor.ToString();
                     break;
                 }
             }
 
-            //Uppdatera Pets grid via personens ID
-            GetPetsByPerson(id);
+            //Uppdatera Employees grid via Departments ID
+            GetEmployeesByDepartments(id);
         }
 
-        private void UpdatePersonToDB()
+       
+        private void UpdateDepartmentsToDB()
         {
             //Kontrollera att vi har en markerad rad i grid
-            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+            if (gridDepartmentOutput.SelectedRows.Count != 1) return;
 
             //Hämta data från grid
-            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            DataGridViewSelectedRowCollection row = gridDepartmentOutput.SelectedRows;
             int id = Convert.ToInt32(row[0].Cells[0].Value);
 
             //hämtar värden från textfält
             string name = txtName.Text;
-            int age = Convert.ToInt32(txtAge.Text);
+            int floor = Convert.ToInt32(txtFloor.Text);
 
             //Skapar en SQL Querry
-            string SqlQuerry = $"CALL updatePeople({id}, '{name}', {age});";
+            string SqlQuerry = $"CALL updateDepartment({id}, '{name}', {floor});";
 
             //MySqlCommand
             MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
@@ -267,29 +302,71 @@ namespace GbSOSDbConnect
             }
 
             //Hämta den nya datan
-            SelectPersonsFromDB();
+            SelectDepartmentFromDB();
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            UpdatePersonToDB();
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            DeletePerson();
-        }
-        private void DeletePerson()
+        private void UpdateEmployeesToDB()
         {
             //Kontrollera att vi har en markerad rad i grid
-            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+            if (gridEmployeeOutput.SelectedRows.Count != 1) return;
 
             //Hämta data från grid
-            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            DataGridViewSelectedRowCollection row = gridEmployeeOutput.SelectedRows;
+            int id = Convert.ToInt32(row[0].Cells[0].Value);
+
+            //hämtar värden från textfält
+
+            string employeesName = txtEmployeeName.Text;
+            string employeesAddress = txtEmployyeAddress.Text;
+            string employeesPhoneNumber = txtPhoneNumber.Text;
+            string employeesEmail = txtEmail.Text;
+          
+
+            //Skapar en SQL Querry
+            string SqlQuerry = $"CALL updateEmployee({id}, '{employeesName}', '{employeesAddress}', '{employeesPhoneNumber}', '{employeesEmail}');";
+
+            //MySqlCommand
+            MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
+
+            try
+            {
+                //Öppna koppling till DB
+                conn.Open();
+
+                //Exekverar commando
+                cmd.ExecuteReader();
+
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
+
+            //Hämta den nya datan
+           SelectEmployeesFromDB();
+        }
+        private void btnUpdateDep(object sender, EventArgs e)
+        {
+            UpdateDepartmentsToDB();
+        }
+
+        private void btnDeleteDep(object sender, EventArgs e)
+        {
+            DeleteDepartments();
+        }
+        private void DeleteDepartments()
+        {
+            //Kontrollera att vi har en markerad rad i grid
+            if (gridDepartmentOutput.SelectedRows.Count != 1) return;
+
+            //Hämta data från grid
+            DataGridViewSelectedRowCollection row = gridDepartmentOutput.SelectedRows;
             int id = Convert.ToInt32(row[0].Cells[0].Value);
 
             //Skapar en SQL Querry
-            string SqlQuerry = $"CALL deletePeople({id});";
+            string SqlQuerry = $"CALL deleteDepartment({id});";
 
             //MySqlCommand
             MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
@@ -310,13 +387,13 @@ namespace GbSOSDbConnect
             }
 
             //Hämta den nya datan
-            SelectPersonsFromDB();
+            SelectDepartmentFromDB();
         }
 
-        private void GetPetsByPerson(int id)
+        private void GetEmployeesByDepartments(int id)
         {
-            //Sql querry
-            string SqlQuerry = $"CALL SelectPetByPeople({id});";
+            //Sql querry (för att hitta employee by department)
+            string SqlQuerry = $"CALL selectEmployeeByDepartment({id});";
 
             //Command
             MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
@@ -334,7 +411,7 @@ namespace GbSOSDbConnect
                 dt.Load(reader);
 
                 //Koppla dt till DatSource i Grid
-                gridPetsOutput.DataSource = dt;
+                gridEmployeeOutput.DataSource = dt;
 
                 //Stäng koppling
                 conn.Close();
@@ -344,20 +421,21 @@ namespace GbSOSDbConnect
             }
         }
 
-        private void btnAddPetToPerson_Click(object sender, EventArgs e)
+        private void btnAddEmployeeToD(object sender, EventArgs e)
         {
-            AddPetToPerson();
+            AddEmployeesToDepartments();
         }
 
-        private void AddPetToPerson()
+        private void AddEmployeesToDepartments()
         {
             //Kontrollera att vi har en markerad rad i grid
-            if (gridPeopleOutput.SelectedRows.Count != 1) return;
+            if (gridDepartmentOutput.SelectedRows.Count != 1) return;
+         
 
-            //Kontrollera att Pets formuläret har inmatade värden
+            //Kontrollera att Employee formuläret har inmatade värden
             bool valid = true;
 
-            foreach (TextBox txtBox in txtBoxesPets)
+            foreach (TextBox txtBox in txtBoxesEmployees)
             {
                 //Trimmar test-innehållet
                 txtBox.Text = txtBox.Text.Trim();
@@ -381,18 +459,24 @@ namespace GbSOSDbConnect
                 MessageBox.Show("Felaktig validering. Kontrollera röda fält.");
                 return;
             }
-
+                       
             //Hämta data från grid
-            DataGridViewSelectedRowCollection row = gridPeopleOutput.SelectedRows;
+            DataGridViewSelectedRowCollection row = gridDepartmentOutput.SelectedRows;
             int id = Convert.ToInt32(row[0].Cells[0].Value);
 
-            //Hämta textvärden
-            string petName = txtPetName.Text;
-            string petSpieces = txtPetSpieces.Text;
+            string employeesName = txtEmployeeName.Text;
+            string employeesAddress = txtEmployyeAddress.Text;
+            string employeesPhoneNumber = txtPhoneNumber.Text;
+            string employeesEmail = txtEmail.Text;
+            
 
-            //SqlQuerry
-            string SqlQuerry = $"CALL insertPetToPerson({id}, '{petName}', '{petSpieces}');";
 
+
+            //Skapar en SQL Querry
+
+            string SqlQuerry = $"CALL insertemployeeToDepartment( {id}, '{employeesName}', '{employeesAddress}', '{employeesPhoneNumber}', '{employeesEmail}');";         
+
+                      
             //MySqlCommand
             MySqlCommand cmd = new MySqlCommand(SqlQuerry, conn);
 
@@ -411,24 +495,29 @@ namespace GbSOSDbConnect
                 MessageBox.Show(e.Message);
             }
 
-            //Uppdatera PetGrid
-            GetPetsByPerson(id);
+            //Uppdatera EmployeeGrid
+            GetEmployeesByDepartments(id);
 
             MessageBox.Show("Insert finished successfully!");
+
+            txtEmployeeName.Clear();
+            txtEmployyeAddress.Clear();
+            txtPhoneNumber.Clear();
+            txtEmail.Clear();
         }
 
-        private void btnSelectPets_Click(object sender, EventArgs e)
+        private void btnSelectemployee(object sender, EventArgs e)
         {
-            SelectPetsFromDB();
+            SelectEmployeesFromDB();
         }
 
-        private void AddPetToNewPerson()
+        private void AddEmployeesToNewDepartment()
         {
             //Validering
-            //Kontrollera att både Persons och Pets formuläret har inmatade värden
+            //Kontrollera att både Department och employyes formuläret har inmatade värden
             bool valid = true;
 
-            foreach (TextBox txtBox in txtBoxesPerson)
+            foreach (TextBox txtBox in txtBoxesDepartments)
             {
                 //Trimmar test-innehållet
                 txtBox.Text = txtBox.Text.Trim();
@@ -446,7 +535,7 @@ namespace GbSOSDbConnect
                 }
             }
 
-            foreach (TextBox txtBox in txtBoxesPets)
+            foreach (TextBox txtBox in txtBoxesDep_Emp)
             {
                 //Trimmar test-innehållet
                 txtBox.Text = txtBox.Text.Trim();
@@ -470,15 +559,19 @@ namespace GbSOSDbConnect
                 MessageBox.Show("Felaktig validering. Kontrollera röda fält.");
                 return;
             }
-
+                     
+                       
             //Hämta data och exekvera SQL
-            string personName = txtName.Text;
-            int personAge = Convert.ToInt32(txtAge.Text);
-            string petName = txtPetName.Text;
-            string petSpieces = txtPetSpieces.Text;
+            string departmentsName = txtName.Text;
+            int departmentsFloor = Convert.ToInt32(txtFloor.Text);
+            string employeesName = txtEmployeeName.Text;
+            string employeesAddress = txtEmployyeAddress.Text;
+            string employeesPhoneNumber = txtPhoneNumber.Text;
+            string employeesEmail = txtEmail.Text;
+
 
             //Skapa SQL querry
-            string sqlQuerry = $"CALL InsertNewPetToNewPeople('{personName}', {personAge}, '{petName}', '{petSpieces}');";
+            string sqlQuerry = $"CALL InsertNewEmployeeToNewDepartment('{departmentsName}', '{departmentsFloor}', '{employeesName}', '{employeesAddress}', '{employeesPhoneNumber}', '{employeesEmail}');";
 
             //Skapa Command objekt
             MySqlCommand cmd = new MySqlCommand(sqlQuerry, conn);
@@ -494,19 +587,32 @@ namespace GbSOSDbConnect
                 MessageBox.Show(e.Message);
             }
 
-            //Hämta data till Person Tabellen
-            SelectPersonsFromDB();
+            //Hämta data till Department Tabellen
+            SelectDepartmentFromDB();
 
             //Markera den nya personen i grid
-            gridPeopleOutput.Rows[gridPeopleOutput.Rows.Count - 2].Selected = true;
+            gridDepartmentOutput.Rows[gridDepartmentOutput.Rows.Count - 2].Selected = true;
 
             //Hämta data till Pet Tabellen
             GetRowData();
+            txtName.Clear();
+            txtFloor.Clear();
+            txtEmployeeName.Clear();
+            txtEmployyeAddress.Clear();
+            txtPhoneNumber.Clear();
+            txtEmail.Clear();
         }
 
-        private void btnAddPetToNewPerson_Click(object sender, EventArgs e)
+        private void btnAddEmployeeToNewDep(object sender, EventArgs e)
         {
-            AddPetToNewPerson();
+            AddEmployeesToNewDepartment();
         }
+
+        private void btnUpdateEmployeeToDB(object sender, EventArgs e)
+        {
+            UpdateEmployeesToDB ();
+        }
+
+        
     }
 }
