@@ -28,7 +28,7 @@ namespace EmployyeManageSys
             string server = "localhost";
             string database = "gbsosdbapplikation";
             string user = "root";
-            string password = "Mns@19741111";
+            string password = "Mns";
 
             string connString = $"SERVER={server};DATABASE={database};UID={user};PASSWORD={password};";
 
